@@ -15,23 +15,29 @@ month = {
         }
 
 data = {
-			"place" : u"",
-			"ozone" : None,
-			"dateExtracted" : datetime(2015,1,1,0,0),
-			"unit" : u'\u03bc' + u'g/m'+ u'\xb3',
-			"particulate2.5" : None,
-			"particulate10" : None
+			u"place" : u"",
+			u"ozone" : None,
+			u"dateExtracted" : datetime(2015,1,1,0,0),
+			u"unit" : u'\u03bc' + u'g/m'+ u'\xb3',
+			u"particulate2.5" : None,
+			u"particulate10" : None,
+			u"prescribed_standard" : {
+							u"ozone" : 180,
+							u"particulate2.5": 100,
+							u"particulate10": 60
+						}
 	   }
 
 #R.K Puram
 data['place'] = u"R.K Puram"
 url = "http://www.dpccairdata.com/dpccairdata/display/rkPuramView15MinData.php"
+r = ""
 while True:
 	try:
 		r = requests.get(url)
 		break
 	except:
-		print "Error " + str(r.status_code)
+		print "Error: RETRYING TO CONNECT TO SERVER" 
 		continue
 #with open("rkp",'w') as f:
 	#f.write(r.text.encode('utf-8'))
@@ -41,12 +47,11 @@ some_elements_2 =  soup.find_all('tr',class_='tdcolor2')
 
 for td in some_elements_1:
 	flag_str = 0
-	flag_val = 0
 	date = []
 	for i in td:
 		nav_text = i.string
 		word =  unicode(nav_text)
-		if (nav_text!="Ozone" or re.search(r'Particulate',word)) and flag_str==0:
+		if nav_text!="Ozone" and flag_str==0:
 			continue
 		flag_str = 1
 		if nav_text =="Ozone":
@@ -65,17 +70,29 @@ for td in some_elements_1:
 					date.append(mi)
 					date.append(s)
 			continue		
-		for k in i:
-			try:
-				if flag_val==0:
-					num = re.search(r"\d+.\d+",k).group()
-					data['ozone'] = int(num)
-					#If data not updated will save the Standard
-					flag_val+=1
-			except:
-				continue
 	if len(date)>0:
 		data['dateExtracted'] = datetime(date[0],date[1],date[2],date[3],date[4],date[5])
+
+for td in some_elements_1:
+	flag_val = 0
+	flag_str = 0
+	for i in td:
+		nav_text = i.string
+		word =  unicode(nav_text)
+		if re.search(r'Ozone',word):
+			flag_str+=1
+			continue
+		if flag_str==1 and nav_text==None:
+			for k in i:
+				try:
+						val = unicode(k)
+						if flag_val==0 and re.search(r"\d+",val):	
+							num = re.search(r"\d+\.\d",val).group()
+							data['ozone'] = float(num)
+							#If data not updated will save the Standard
+							flag_val+=1
+				except:
+						continue
 
 for td in some_elements_1:
 	flag_val = 0
