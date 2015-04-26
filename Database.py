@@ -1,9 +1,14 @@
 from pymongo import MongoClient
 import json 
 import pprint
+import sys
 
-client = MongoClient("mongodb://localhost:27017/")
-db = client.pollution
+try:
+	client = MongoClient("mongodb://localhost:27017/")
+	db = client.pollution
+except:
+	print "Please run the server!"
+	sys.exit()
 
 def insert_data(data):
 	fixed = fix_data_for_insertion(data)
@@ -54,8 +59,11 @@ def fix_data_for_insertion(data):
 
 
 
-def find_data(query):
-	return db.data.find(query)
+def find_data(query,proj=None,sort=None):
+	if proj and sort:
+		return db.data.find(query,proj).sort([('date',1)]) #get based on time in sorted order
+	else:
+		return db.data.find(query)
 
 def update_data(query):
 	pass
