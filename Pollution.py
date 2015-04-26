@@ -11,13 +11,13 @@ class Pollution(object):
 	def __init__(self, location):
 		self.location = location
 		self.date = None
-		self.standard = {u"ozone" : 180,u"particulate2.5": 100,u"particulate10": 60}
+		self.standard = {u"ozone" : 180,u"particulate2": 60,u"particulate10": 100}
 		self.data =  {
 						u"place" : unicode(self.location),
 						u"ozone" : None,
 						u"dateExtracted" : datetime(2015,1,1,0,0),
 						u"unit" : u'\u03bc' + u'g/m'+ u'\xb3',
-						u"particulate2.5" : None,
+						u"particulate2" : None,
 						u"particulate10" : None,
 	    			}
 
