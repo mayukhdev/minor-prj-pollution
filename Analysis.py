@@ -11,8 +11,11 @@ def showPlotMul(elements,location,time,data):
 	"""Only 1 element """
 	if len(elements)>1:
 		return
-	#fig = pl.figure()
-	#ax = fig.add_subplot(111)
+	fig = pl.figure()
+	ax = fig.add_subplot(111)
+	ozone_standard = 180
+	particulate2_standard = 60
+	particulate10_standard = 100
 	place = {}
 	for l in location:
 		values = {
@@ -37,7 +40,41 @@ def showPlotMul(elements,location,time,data):
 					place[l]['date'].append(d['date'])
 	
 	#print "HERE"
-	pprint.pprint(place)
+	#pprint.pprint(place)
+	standard = []
+	length_of_values = len(place[location[0]]['date'])
+	for i in range(length_of_values):
+		if elements[0]=='ozone':
+			standard.append(ozone_standard)
+		elif elements[0]=='particulate10':
+			standard.append(particulate10_standard)
+		else:
+			standard.append(particulate2_standard)
+
+	"""Build Plot"""
+	std = pl.plot(range(length_of_values),standard,color='red',linewidth=5)
+	c = ['black','blue','green','magenta']
+	c_num = 0
+	f = {}
+	legends = [std[0]]
+	legends_name = ["Standard"]
+	loc = ""
+	ax.set_ylim(0,800)
+	for e in elements:
+		for l in location:
+			f[l] = ax.plot(range(length_of_values),place[l][e],color=c[c_num],linewidth=2,marker='o', linestyle='--')
+			c_num+=1
+			loc+= ", "+l  
+			ax.set_ylabel(u"{0} ".format(e)+'u' + u'g/m'+ u'\xb3')
+			ax.set_xticks(range(length_of_values))
+			xtickNames = ax.set_xticklabels(place[l]['date'],rotation=90)	
+			legends.append(f[l][0])
+			legends_name.append(l)
+			pl.setp(xtickNames)
+	
+	ax.set_title('{0} in'.format(e)+loc)
+	pl.legend(legends,legends_name,loc='best')
+	pl.show()
 
 def showPlot(elements,location,time,data):
 	fig = pl.figure()
@@ -74,9 +111,10 @@ def showPlot(elements,location,time,data):
 					standard.append(particulate2_standard)
 		
 		if elements[0]=='ozone':
-			std = pl.plot(range(len(standard)),standard,color='red')
-			oz = ax.plot(range(len(ozone)),ozone,color='black')
+			std = pl.plot(range(len(standard)),standard,color='red',linewidth=5)
+			oz = ax.plot(range(len(ozone)),ozone,color='black',marker='o', linestyle='--')
 			ax.set_ylabel(u"Ozone "+'u' + u'g/m'+ u'\xb3')
+			ax.set_ylim(0,800)
 			ax.set_title('Ozone in {0}'.format(location[l]))
 			ax.set_xticks(range(len(ozone)))
 			xtickNames = ax.set_xticklabels(date,rotation=90)	
@@ -84,18 +122,20 @@ def showPlot(elements,location,time,data):
 			pl.legend((std[0],oz[0]),("Ozone","Standard"),loc='best')
 			pl.setp(xtickNames)
 		elif elements[0]=='particulate10':
-			std = pl.plot(range(len(standard)),standard,color='red')
-			p10 = ax.plot(range(len(particulate10)),particulate10,color='black')
+			std = pl.plot(range(len(standard)),standard,color='red',linewidth=5)
+			p10 = ax.plot(range(len(particulate10)),particulate10,color='black',marker='o', linestyle='--')
 			ax.set_ylabel(u"Particulate < 10 "+'u' + u'g/m'+ u'\xb3')
+			ax.set_ylim(0,800)
 			ax.set_title('Particulate < 10 in {0}'.format(location[l]))
 			ax.set_xticks(range(len(particulate10)))
 			xtickNames = ax.set_xticklabels(date,rotation=90)	
 			pl.legend((std[0],p10[0]),("Standard","Particulate < 10"),loc='best')
 			pl.setp(xtickNames)
 		else:
-			std = pl.plot(range(len(standard)),standard,color='red')
-			p10 = ax.plot(range(len(particulate2)),particulate2,color='black')
+			std = pl.plot(range(len(standard)),standard,color='red',linewidth=5)
+			p10 = ax.plot(range(len(particulate2)),particulate2,color='black',marker='o', linestyle='--')
 			ax.set_ylabel(u"Particulate < 2 "+'u' + u'g/m'+ u'\xb3')
+			ax.set_ylim(0,800)
 			ax.set_title('Particulate < 10 in {0}'.format(location[l]))
 			ax.set_xticks(range(len(particulate2)))
 			xtickNames = ax.set_xticklabels(date,rotation=90)	
@@ -115,10 +155,17 @@ def get_data(q):
 			else:
 				counter = i+1
 			break
-		if q[i] not in ['ozone','particulate10','particulate2']:
+		if q[i] not in ['ozone','particulate10','particulate2','oz','p2','p10']:
 			print 'Element error'
 			return 0
-		elements.append(q[i])
+		temp = ""
+		if q[i]=='oz':
+			temp = 'ozone'
+		elif q[i] == 'p10':
+			temp = 'particulate10'
+		elif q[i] == 'p2':
+			temp = 'particulate2'
+		elements.append(temp)
 	location = []
 	for j in range(counter,len(q)):
 		if q[j] in ['from','till']:
@@ -157,8 +204,8 @@ def get_data(q):
 						,sort = 1)					
 				for i in d:
 					data.append(i)
-		for j in data:
-			pprint.pprint(j)
+		#for j in data:
+			#pprint.pprint(j)
 		showPlot(elements,location,time,data)
 	else:
 		d = find_data({'date': {'$lte' : time}})
@@ -172,7 +219,7 @@ def main():
 	#find_data(q)[0]
 	while True:
 		print ""
-		print "Elements = ozone , particulate10 , particulate2"
+		print "Elements = oz: ozone , p10: particulate < 10 , p2: particulate < 2.5"
 		print "Location = RK: RK Puram , MM: Mandir Marg , AV: Anand Vihar, PB: Punjabi Bagh"
 		print "Quit = q"
 		print "Enter Query:",
