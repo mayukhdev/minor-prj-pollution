@@ -134,9 +134,9 @@ def showPlot(elements,location,time,data):
 		else:
 			std = pl.plot(range(len(standard)),standard,color='red',linewidth=5)
 			p10 = ax.plot(range(len(particulate2)),particulate2,color='black',marker='o', linestyle='--')
-			ax.set_ylabel(u"Particulate < 2 "+'u' + u'g/m'+ u'\xb3')
+			ax.set_ylabel(u"Particulate < 2.5 "+'u' + u'g/m'+ u'\xb3')
 			ax.set_ylim(0,800)
-			ax.set_title('Particulate < 10 in {0}'.format(location[l]))
+			ax.set_title('Particulate < 2.5 in {0}'.format(location[l]))
 			ax.set_xticks(range(len(particulate2)))
 			xtickNames = ax.set_xticklabels(date,rotation=90)	
 			pl.legend((std[0],p10[0]),("Standard","Particulate < 2"),loc='best')
@@ -156,6 +156,7 @@ def get_data(q):
 				counter = i+1
 			break
 		if q[i] not in ['ozone','particulate10','particulate2','oz','p2','p10']:
+			print q[i]
 			print 'Element error'
 			return 0
 		temp = ""
@@ -184,13 +185,14 @@ def get_data(q):
 		elif q[j]=='MM':
 			temp = 'Mandir Marg'
 		else:
+			print q[j]
 			print 'Location error'
 			return 0
 		location.append(temp)
 	#NOW
 	time = datetime.today()
 	print elements,location,time
-
+	
 	if len(location)==1:
 		data = []
 		for l in location:		
@@ -214,7 +216,7 @@ def get_data(q):
 		showPlotMul(elements,location,time,d)
 	return 1
 
-def main():
+def Cmdline():
 	#q = {"date":datetime(2015,04,23,15,10)}
 	#find_data(q)[0]
 	while True:
@@ -238,5 +240,3 @@ def main():
 			continue
 	print "Bye"
 
-if __name__ == '__main__':
-	main()
