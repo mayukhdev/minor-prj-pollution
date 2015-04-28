@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Database import find_data
+from Database import *
 from datetime import datetime
 import pprint
 import sys
 import pylab as pl
+
+datab = Database()
 
 def showPlotMul(elements,location,time,data):
 	"""Only 1 element """
@@ -53,13 +55,13 @@ def showPlotMul(elements,location,time,data):
 
 	"""Build Plot"""
 	std = pl.plot(range(length_of_values),standard,color='red',linewidth=5)
-	c = ['black','blue','green','magenta']
+	c = ['black','green','blue','magenta']
 	c_num = 0
 	f = {}
 	legends = [std[0]]
 	legends_name = ["Standard"]
 	loc = ""
-	ax.set_ylim(0,800)
+	#ax.set_ylim(0,500)
 	for e in elements:
 		for l in location:
 			f[l] = ax.plot(range(length_of_values),place[l][e],color=c[c_num],linewidth=2,marker='o', linestyle='--')
@@ -74,6 +76,7 @@ def showPlotMul(elements,location,time,data):
 	
 	ax.set_title('{0} in'.format(e)+loc)
 	pl.legend(legends,legends_name,loc='best')
+	pl.subplots_adjust(left=0.09, right=0.98, top=0.94, bottom=0.32)
 	pl.show()
 
 def showPlot(elements,location,time,data):
@@ -114,7 +117,7 @@ def showPlot(elements,location,time,data):
 			std = pl.plot(range(len(standard)),standard,color='red',linewidth=5)
 			oz = ax.plot(range(len(ozone)),ozone,color='black',marker='o', linestyle='--')
 			ax.set_ylabel(u"Ozone "+'u' + u'g/m'+ u'\xb3')
-			ax.set_ylim(0,800)
+			#ax.set_ylim(0,300)
 			ax.set_title('Ozone in {0}'.format(location[l]))
 			ax.set_xticks(range(len(ozone)))
 			xtickNames = ax.set_xticklabels(date,rotation=90)	
@@ -125,7 +128,7 @@ def showPlot(elements,location,time,data):
 			std = pl.plot(range(len(standard)),standard,color='red',linewidth=5)
 			p10 = ax.plot(range(len(particulate10)),particulate10,color='black',marker='o', linestyle='--')
 			ax.set_ylabel(u"Particulate < 10 "+'u' + u'g/m'+ u'\xb3')
-			ax.set_ylim(0,800)
+			#ax.set_ylim(0,600)
 			ax.set_title('Particulate < 10 in {0}'.format(location[l]))
 			ax.set_xticks(range(len(particulate10)))
 			xtickNames = ax.set_xticklabels(date,rotation=90)	
@@ -135,13 +138,13 @@ def showPlot(elements,location,time,data):
 			std = pl.plot(range(len(standard)),standard,color='red',linewidth=5)
 			p10 = ax.plot(range(len(particulate2)),particulate2,color='black',marker='o', linestyle='--')
 			ax.set_ylabel(u"Particulate < 2.5 "+'u' + u'g/m'+ u'\xb3')
-			ax.set_ylim(0,800)
+			#ax.set_ylim(0,600)
 			ax.set_title('Particulate < 2.5 in {0}'.format(location[l]))
 			ax.set_xticks(range(len(particulate2)))
 			xtickNames = ax.set_xticklabels(date,rotation=90)	
 			pl.legend((std[0],p10[0]),("Standard","Particulate < 2"),loc='best')
 			pl.setp(xtickNames)
-
+	pl.subplots_adjust(left=0.09, right=0.98, top=0.94, bottom=0.32)
 	pl.show()
 
 def get_data(q):
@@ -191,7 +194,7 @@ def get_data(q):
 		location.append(temp)
 	#NOW
 	time = datetime.today()
-	print elements,location,time
+	#print elements,location,time
 	
 	if len(location)==1:
 		data = []
@@ -201,7 +204,7 @@ def get_data(q):
 				query = {
 							'date' : {'$lte': time}
 				}
-				d =  find_data(query,
+				d =  datab.find_data(query,
 						proj={to_find:1,'_id':0,'date':1,}
 						,sort = 1)					
 				for i in d:
@@ -210,33 +213,11 @@ def get_data(q):
 			#pprint.pprint(j)
 		showPlot(elements,location,time,data)
 	else:
-		d = find_data({'date': {'$lte' : time}})
+		d = datab.find_data({'date': {'$lte' : time}})
 		# for i in d:
 		# 	pprint.pprint(i)
 		showPlotMul(elements,location,time,d)
 	return 1
 
-def Cmdline():
-	#q = {"date":datetime(2015,04,23,15,10)}
-	#find_data(q)[0]
-	while True:
-		print ""
-		print "Elements = oz: ozone , p10: particulate < 10 , p2: particulate < 2.5"
-		print "Location = RK: RK Puram , MM: Mandir Marg , AV: Anand Vihar, PB: Punjabi Bagh"
-		print "Quit = q"
-		print "Enter Query:",
-		try:
-			s = raw_input()
-			if s in ["quit","q",'exit']:
-				break
-			query = s.split()
-		
-			if query[0]=='get':
-				check = get_data(query[1:])
-				if check==0:
-					print "Error in Query"
-					continue
-		except:
-			continue
-	print "Bye"
+
 
