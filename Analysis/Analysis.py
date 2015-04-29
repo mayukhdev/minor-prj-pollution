@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import Database
-from datetime import datetime
+import datetime
 import pprint
 import sys
 import pylab as pl
@@ -122,7 +122,7 @@ def showPlot(elements,location,time,data):
 			ax.set_xticks(range(len(ozone)))
 			xtickNames = ax.set_xticklabels(date,rotation=90)	
 			#pl.legend(std,("Standard",),loc='best')
-			pl.legend((std[0],oz[0]),("Ozone","Standard"),loc='best')
+			pl.legend((std[0],oz[0]),("Standard","Ozone"),loc='best')
 			pl.setp(xtickNames)
 		elif elements[0]=='particulate10':
 			std = pl.plot(range(len(standard)),standard,color='red',linewidth=5)
@@ -172,7 +172,7 @@ def get_data(q):
 		elements.append(temp)
 	location = []
 	for j in range(counter,len(q)):
-		if q[j] in ['from','till']:
+		if q[j] in ['from','till','on']:
 			counter = j
 			break
 		if q[j]=="*":
@@ -193,17 +193,42 @@ def get_data(q):
 			return 0
 		location.append(temp)
 	#NOW
-	time = datetime.today()
+	time = None
+	if q[counter+1]=="now":
+		time = [datetime.datetime.today()]
+	elif q[counter+1]=='y':
+		d = datetime.datetime.today() - datetime.timedelta(days=1)
+		time = [datetime.datetime(d.year,d.month,d.day,0,0) , datetime.datetime(d.year,d.month,d.day,23,59)]
+	elif q[counter+1]=='l7':
+		d = datetime.datetime.today() - datetime.timedelta(days=7)
+		time = [datetime.datetime(d.year,d.month,d.day,0,0) , datetime.datetime.today()]
+	elif q[counter+1]=='tm':
+		d = datetime.datetime.today()
+		time = [datetime.datetime(d.year,d.month,1,0,0) , datetime.datetime.today()]
+	elif q[counter+1]=='lm':
+		d = datetime.datetime.today()
+		first_day = datetime.datetime(d.year,d.month,1,23,59)
+		last_month_last_day = first_day - datetime.timedelta(days=1)
+		temp = last_month_last_day
+		last_month_first_day = datetime.datetime(temp.year,temp.month,1,0,0)
+		time = [last_month_first_day,last_month_last_day]
+
+
 	#print elements,location,time
-	
+	query = None
 	if len(location)==1:
 		data = []
 		for l in location:		
 			for e in elements:
 				to_find = 'location.' + l + "." + e
-				query = {
-							'date' : {'$lte': time}
-				}
+				if len(time)==1:
+					query = {
+								'date' : {'$lte': time[0]}
+							}
+				else:
+					query = {
+								'date' : {'$gte':time[0],'$lte':time[1]}
+							}
 				d =  datab.find_data(query,
 						proj={to_find:1,'_id':0,'date':1,}
 						,sort = 1)					
@@ -213,7 +238,11 @@ def get_data(q):
 			#pprint.pprint(j)
 		showPlot(elements,location,time,data)
 	else:
-		d = datab.find_data({'date': {'$lte' : time}})
+		d = None
+		if len(time)==1:
+			d = datab.find_data({'date': {'$lte' : time[0]}})
+		else:
+			d = datab.find_data({'date': {'$gte':time[0],'$lte':time[1]}})
 		# for i in d:
 		# 	pprint.pprint(i)
 		showPlotMul(elements,location,time,d)
