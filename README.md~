@@ -2,5 +2,5 @@
 This program attempts to build a Delhi pollution monitoring system.
 Data calculated:
   Ozone
-  Particulate < 2 
-  Particulate < 10
+  Particulate2.5
+  Particulate10.

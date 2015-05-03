@@ -6,6 +6,7 @@ from Analysis.Analysis import *
 
 class Gui(object):                         
 	def __init__(self, myParent):
+		self.analysis = Analysis()
 		if len(sys.argv)>1 and sys.argv[1] in ["CMD",'cmd','cl']:
 			self.Cmdline()
 			sys.exit()     
@@ -13,7 +14,7 @@ class Gui(object):
 		self.myContainer.pack()
 
 		Label(self.myContainer, text="Choose an Element:").pack(anchor=W)
-		self.v = StringVar()
+		self.radio_element = StringVar()
 		element = [
     					(u"Ozone \u03bcg/m\xb3",'oz'),
     					(u"Particulate < 10 \u03bcg/m\xb3",'p10'),
@@ -26,18 +27,18 @@ class Gui(object):
                 indicatoron = 0,
                 width = 64,
                 padx = 20, 
-                variable=self.v, 
+                variable=self.radio_element, 
                 command=self.showText,
                 value=val).pack(anchor=W)
 
-		self.var1 = StringVar()
-		self.C1 = Checkbutton(self.myContainer, text="Anand Vihar ",variable = self.var1,onvalue="AV",offvalue="")
-		self.var2 = StringVar()
-		self.C2 = Checkbutton(self.myContainer, text="Mandir Marg ",variable = self.var2,onvalue="MM",offvalue="")
-		self.var3 = StringVar()
-		self.C3 = Checkbutton(self.myContainer, text="Punjabi Bagh",variable = self.var3,onvalue="PB",offvalue="")
-		self.var4 = StringVar()
-		self.C4 = Checkbutton(self.myContainer, text="R.K Puram  ",variable = self.var4,onvalue="RKP",offvalue="")
+		self.checkbutton1 = StringVar()
+		self.C1 = Checkbutton(self.myContainer, text="Anand Vihar ",variable = self.checkbutton1,onvalue="AV",offvalue="")
+		self.checkbutton2 = StringVar()
+		self.C2 = Checkbutton(self.myContainer, text="Mandir Marg ",variable = self.checkbutton2,onvalue="MM",offvalue="")
+		self.checkbutton3 = StringVar()
+		self.C3 = Checkbutton(self.myContainer, text="Punjabi Bagh",variable = self.checkbutton3,onvalue="PB",offvalue="")
+		self.checkbutton4 = StringVar()
+		self.C4 = Checkbutton(self.myContainer, text="R.K Puram  ",variable = self.checkbutton4,onvalue="RKP",offvalue="")
 		"""
 		#Button initials.
 		self.button1 = Button(self.myContainer,command=self.combine) 
@@ -49,8 +50,8 @@ class Gui(object):
 		self.C3.pack(anchor=W)
 		self.C4.pack(anchor=W)
 		"""Select yesterday, last 7 days, last Month , this month"""
-		self.d = None
-		self.d = StringVar()
+		self.time = None
+		self.time = StringVar()
 		date_options = [
 						(u"Yesterday",'y'),
 						(u"Last 7 Days",'l7'),
@@ -64,21 +65,13 @@ class Gui(object):
                 indicatoron = 0,
                 width = 64,
                 padx = 20, 
-                variable=self.d, 
+                variable=self.time, 
                 command=self.combine,
                 value=val).pack(anchor=W)
 		#Label(self.myContainer, text="\n").pack(anchor = W)
 		""""""
 		"""Enter date(optional)"""
-		# Label(self.myContainer, text="\nEnter date(yyyy-mm-dd):").pack(anchor = W)
-		# Label(self.myContainer, text="From:").pack(anchor = W)
-		# self.entrytext1 = StringVar()
-		# self.E1 = Entry(self.myContainer, textvariable = self.entrytext1).pack()
-
-		# Label(self.myContainer, text="To:").pack(anchor = W)
-		# self.entrytext2 = StringVar()
-		# self.E2 = Entry(self.myContainer, textvariable = self.entrytext2).pack()
-		# Label(self.myContainer, text="\n").pack(anchor = W)
+		#Not implemented
 		""""""
 		"""Execute Button"""
 		#self.button1.pack()	
@@ -118,28 +111,28 @@ class Gui(object):
 			self.text.pack()
 
 	def buildCmd(self):
-		interval = self.d.get()  	
+		interval = self.time.get()  	
 	   	if interval=='':
 	   		interval = 'now'
 	   		
-	   	s = "get %s in %s %s %s %s on %s" % (self.v.get(),self.var1.get(), self.var2.get(),self.var3.get(),self.var4.get(),interval)
+	   	s = "get %s in %s %s %s %s on %s" % (self.radio_element.get(),self.checkbutton1.get(), self.checkbutton2.get(),self.checkbutton3.get(),self.checkbutton4.get(),interval)
 	   	query = s.split()
 	   	#print query
 	   	if len(query)<6 or query[1]=='in': #Need to check for locations missing
 			return
 	   	if query[0]=='get':
-			get_data(query[1:])
+			self.analysis.get_data(query[1:])
 	
 	def Cmdline(self):
 		#q = {"date":datetime(2015,04,23,15,10)}
 		#find_data(q)[0]
 		while True:
 			print ""
-			print "Elements = oz: ozone , p10: particulate < 10 , p2: particulate < 2.5"
-			print "Location = RK: RK Puram , MM: Mandir Marg , AV: Anand Vihar, PB: Punjabi Bagh"
-			print "Time = now: Since Beginning , y: Yesterday, l7: Last 7 Days, tm: This Month, lm: Last Month"
-			print "Quit = q"
-			print "Enter Query:",
+			#print "Elements = oz: ozone , p10: particulate < 10 , p2: particulate < 2.5"
+			#print "Location = RK: RK Puram , MM: Mandir Marg , AV: Anand Vihar, PB: Punjabi Bagh"
+			#print "Time = now: Since Beginning , y: Yesterday, l7: Last 7 Days, tm: This Month, lm: Last Month"
+			#print "Quit = q"
+			print "Enter Query-->",
 			try:
 				s = raw_input()
 				if s in ["quit","q",'exit']:
@@ -147,7 +140,7 @@ class Gui(object):
 				query = s.split()
 			
 				if query[0]=='get':
-					check = get_data(query[1:])
+					check = self.analysis.get_data(query[1:])
 					if check==0:
 						print "Error in Query"
 						continue

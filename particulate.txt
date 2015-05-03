@@ -1,0 +1,25 @@
+Particle pollution:
+
+Good (0-50)
+Air pollution poses little or no risk.	
+
+Moderate (51-100)
+Unusually sensitive individuals may experience respiratory symptoms.
+
+Unhealthy for Sensitive Groups (101-150)
+Increasing likelihood of respiratory symptoms in sensitive individuals, aggravation of heart or lung disease and premature mortality in persons with cardiopulmonary disease
+and the elderly.
+
+Unhealthy (151-200)
+Increased aggravation of heart or lung disease and premature mortality inpersons with cardiopulmonary
+disease and the elderly;
+increased respiratory effects in general population.
+
+Very Unhealthy (201-300)
+Significant aggravation of heart or lung disease and premature mortality in persons with cardiopulmonary
+disease and the elderly;
+significant increase in respiratory effects in general population.
+
+Hazardous (301-500)
+Serious aggravation of heart or lung disease and premature mortality in persons with cardiopulmonary disease and the elderly;
+serious risk of respiratory effects in general population.

@@ -1,7 +1,7 @@
 import pprint
 import pylab as pl
 
-def ShowBarPlots(location,standard,data,name):
+def ShowBarPlots(location,standard,data,name,date):
 	st = []
 	val = standard
 	for i in range(7):
@@ -12,7 +12,7 @@ def ShowBarPlots(location,standard,data,name):
 	ax.bar([1.5,2.5,3.5,4.5], data,color='black',width=0.5)
 	ax.set_xlim(1,5.75)
 	ax.set_ylabel(name)
-	ax.set_title('{0} in Delhi'.format(name))
+	ax.set_title('{0} in Delhi '.format(name))
 	xTickMarks = [i for i in location]
 	ax.set_xticks([1.7,2.7,3.7,4.7])
 	xtickNames = ax.set_xticklabels(xTickMarks)
@@ -46,7 +46,8 @@ def ShowData(data): #add data feild
 			ShowBarPlots(location,data['standard']['ozone'],ozone,"ozone")
 	except:
 		print "Data Insufficient for Ozone."
-	ShowBarPlots(location,data['standard']['particulate10'],p10,"particulate10")
-	ShowBarPlots(location,data['standard']['particulate2'],p2,"particulate2")
+		return
+	ShowBarPlots(location,data['standard']['particulate10'],p10,"particulate10",data['date'])
+	ShowBarPlots(location,data['standard']['particulate2'],p2,"particulate2",data['date'])
 
 

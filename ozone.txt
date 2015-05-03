@@ -1,0 +1,34 @@
+Ozone:
+
+Sensitive groups include people with heart or lung disease,
+older adults, children and teenagers, and people who are active outdoors.	
+
+Good (0-50)	
+It’s a great day to be active outside!
+
+Moderate (51-100)
+Unusually sensitive people: Consider reducing prolonged or heavyexertion. 
+Everyone else: It’s a good day to be active outside!
+
+Unhealthy for Sensitive Groups (101-150)	
+Sensitive groups: Reduce prolonged or heavy exertion. Take more breaks, do less intense activities. Watch for symptoms 
+such as coughing or shortness of breath. 
+Schedule outdoor activities in the morning when ozone is lower.
+People with asthma should follow their asthma action plans and keep quick relief medicine handy.
+
+Unhealthy (151 to 200)	
+Sensitive groups: Avoid prolonged or heavy outdoor exertion. 
+Schedule outdoor activities in the morning when ozone is lower. 
+Consider moving activities indoors. People with asthma, keep quick-relief medicine handy.
+
+Everyone else: Reduce prolonged or heavy outdoor exertion.
+Take more breaks, do less intense activities.
+Schedule outdoor activities in the morning when ozone is lower.
+
+Very Unhealthy Alert (201-300)		
+Sensitive groups: Avoid all physical activity outdoors.
+Move activities indoors or reschedule to a time when air qualityis better. People with asthma, keep quick-relief medicine handy.
+
+Everyone else: Avoid prolonged or heavy outdoor exertion.
+Schedule outdoor activities in the morning when ozone is lower.
+Consider moving activities indoors.

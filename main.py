@@ -1,41 +1,51 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Usage: main.py
 
-from Pollution import Pollution
-from DelhiPollution import DelhiPollution
-import pprint
-import pylab as pl
+Initilizes Server
+Extracts data from Pollution and formats it to be stored in the database.
+Inserts into database
+"""
+from Server.DelhiPollution import DelhiPollution
 import sys
-from LatestData import ShowData
 from Database import *
 from time import sleep
 
-def Extract(): 
-	RKP = DelhiPollution("RK Puram")
-	PB =  DelhiPollution("Punjabi Bagh")
-	AV = DelhiPollution("Anand Vihar")
-	MM = DelhiPollution("Mandir Marg")
+class ServerExtract(object):
+	def __init__(self):
+		self.database_insert = Database()
+	def Extract(self): 
+		RKP = DelhiPollution("RK Puram")
+		PB =  DelhiPollution("Punjabi Bagh")
+		AV = DelhiPollution("Anand Vihar")
+		MM = DelhiPollution("Mandir Marg")
 
-	data_audit = {
-			"date" : RKP.getData()['dateExtracted'],
-			"location" : {
-							RKP.getLocation() : RKP.getData(),
-							PB.getLocation() : PB.getData(),
-							AV.getLocation() : AV.getData(),
-							MM.getLocation() : MM.getData()
-						},
-			"unit" : RKP.getData()["unit"],
-			"standard" : RKP.getStandard()
-		}
-	#pprint.pprint(data_audit)
-	if len(sys.argv)>1 and sys.argv[1]=="show":
-		ShowData(data_audit)
+		data_audit = {
+				"date" : RKP.getData()['dateExtracted'],
+				"location" : {
+								RKP.getLocation() : RKP.getData(),
+								PB.getLocation() : PB.getData(),
+								AV.getLocation() : AV.getData(),
+								MM.getLocation() : MM.getData()
+							},
+				"unit" : RKP.getData()["unit"],
+				"standard" : RKP.getStandard()
+			}
 
-	insert_data(data_audit)
+		self.database_insert.insert_data(data_audit)
 		
 
 if __name__=="__main__":
-	print "Server Initiated"
-	while True:
-		Extract()
-		sleep(20*60)
+	try:
+		extract = ServerExtract()
+		print "Server Initiated"
+		while True:
+			extract.Extract()
+			sleep(20*60)
+	except KeyboardInterrupt:
+		print "Server Stopped"
+	except:
+		print sys.exc_info()[0]
+	finally:		
+		print "Bye"
